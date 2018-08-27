@@ -1,0 +1,13 @@
+version: '3'
+services:
+  nikola-orgmode:
+    image: abellmann/nikola-orgmode
+    ports:
+      - 8000:8000
+    volumes:
+      - ~/blog/:/site
+    # open interactive shell
+    stdin_open: true
+    tty: true
+    # default directory..
+    working_dir: /site

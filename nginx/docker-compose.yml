@@ -1,0 +1,17 @@
+version: "2"
+services:
+  nginx:
+    image: nginx
+    container_name: nginx
+    networks:
+      - outside
+    ports:
+      - "80:80"
+      - "433:443"
+    volumes:
+      - /var/jenkins_home/workspace/Nikola/output/:/usr/share/nginx/html
+      - ./siteconfs/:/etc/nginx/conf.d
+      - ./snippets/:/etc/nginx/snippets
+networks:
+  outside:
+    driver: bridge

@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  test:
+    build: .
+    image: custom-gradle
+    working_dir: /home/gradle/project
+    volumes:
+      - "/Users/louiszgm/AndroidStudioProjects/android-architecture-components/GithubBrowserSample:/home/gradle/project"
+      - "/Users/louiszgm/AndroidStudioProjects/android-architecture-components/versions.gradle:/home/gradle/versions.gradle"
+      # - "/Users/louiszgm/BBKProjects/Parentsupport:/home/gradle/project"
+      - "/Users/louiszgm/Library/Android:/home/gradle/Android"
+    command: gradle build

@@ -1,0 +1,110 @@
+* Host
+** Pull dockerfiles
+#+BEGIN_SRC sh :dir /ssh:cvm:~/dockerfiles/nginx :tangle no
+sudo sh run.sh
+#+END_SRC
+
+#+RESULTS:
+: e8073e258eb639c3d9d5db235f22d55b79b0b7a172685592fa6d0ef08851dbd6
+
+#+BEGIN_SRC sh :dir /ssh:cvm:~/dockerfiles :tangle no
+git pull
+#+END_SRC
+
+#+RESULTS:
+| Updating      | cb99fc4..8914c99 |          |               |                                  |   |              |
+| Fast-forward  |                  |          |               |                                  |   |              |
+| nginx/stop.sh |                  |          |             1 | +                                |   |              |
+| run.org       |                  |          |            34 | +++++++++++++++++++++++++++++++--- |   |              |
+| 2             | files            | changed, |            32 | insertions(+),                   | 3 | deletions(-) |
+| create        | mode             |   100644 | nginx/stop.sh |                                  |   |              |
+
+* Nginx
+#+BEGIN_SRC conf :tangle nginx/run.sh
+  sudo docker run --rm -p 80:80 -p 443:443 \
+       --network nginx_outside \
+       -v /var/jenkins_home/workspace/Nikola/output/:/usr/share/nginx/html \
+       -v $PWD/siteconfs/:/etc/nginx/conf.d \
+       -v $PWD/snippets/:/etc/nginx/snippets/ \
+       --name mynginx \
+       -d nginx
+#+END_SRC
+
+
+#+BEGIN_SRC sh :tangle nginx/stop.sh
+sudo docker container stop mynginx
+#+END_SRC
+
+#+BEGIN_SRC yaml :tangle nginx/docker-compose.yml
+  version: "2"
+  services:
+    nginx:
+      image: nginx
+      container_name: nginx
+      networks:
+        - outside
+      ports:
+        - "80:80"
+        - "433:443"
+      volumes:
+        - /var/jenkins_home/workspace/Nikola/output/:/usr/share/nginx/html
+        - ./siteconfs/:/etc/nginx/conf.d
+        - ./snippets/:/etc/nginx/snippets
+  networks:
+    outside:
+      driver: bridge
+#+END_SRC
+
+
+
+* Jenkins
+#+BEGIN_SRC yaml :tangle jenkins/docker-compose.yml
+  version: '2'
+  services:
+    jenkins-server:
+      image: jenkins/jenkins
+      container_name: jenkins
+      networks:
+        - nginx_outside
+      volumes:
+        - /var/jenkins_home:/var/jenkins_home
+        - /etc/localtime:/etc/localtime
+        - ./timezone:/etc/timezone
+  networks:
+    nginx_outside:
+      external: true
+#+END_SRC
+* nikola
+#+BEGIN_SRC sh :tangle nikola/run_dev.sh
+docker run --rm -v ~/blog/:/site -w /site -u $(id -u):$(id -g) \
+    -p 8888:8000 registry.gitlab.com/paddy-hack/nikola nikola auto \
+    --address 0.0.0.0
+#+END_SRC
+
+#+BEGIN_SRC sh :tangle nikola/run.sh
+docker run --rm -v ~/blog/:/site -w /site -u $(id -u):$(id -g) \
+    -p 8888:8000 registry.gitlab.com/paddy-hack/nikola nikola serve
+#+END_SRC
+
+#+BEGIN_SRC sh :tangle nikola/build.sh
+docker run --rm -v ~/blog/:/site -w /site -u $(id -u):$(id -g) \
+    registry.gitlab.com/paddy-hack/nikola nikola build
+#+END_SRC
+
+#+BEGIN_SRC sh
+docker run --rm -it --name nikola  -v ~/blog/:/site registry.gitlab.com/paddy-hack/nikola /bin/sh
+#+END_SRC
+
+#+BEGIN_SRC sh :tangle nikola/stop.sh
+docker container stop nikola
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle nikola/bin/nikola-docker
+#!/bin/bash
+docker run --rm -v ~/blog/:/site -w /site -u $(id -u):$(id -g) \
+     -p 8000:8000 registry.gitlab.com/paddy-hack/nikola nikola "$@"
+
+#+END_SRC
+
+获取文章信息的命令
+nikola status -Psd
