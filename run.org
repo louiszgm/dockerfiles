@@ -99,7 +99,7 @@ docker run --rm -it --name nikola  -v ~/blog/:/site registry.gitlab.com/paddy-ha
 docker container stop nikola
 #+END_SRC
 
-#+BEGIN_SRC bash :tangle nikola/bin/nikola-docker
+#+BEGIN_SRC bash :tangle-mode (identity #o755) :tangle nikola/bin/nikola-docker
 #!/bin/bash
 docker run --rm -v ~/blog/:/site -w /site -u $(id -u):$(id -g) \
      -p 8000:8000 registry.gitlab.com/paddy-hack/nikola nikola "$@"
