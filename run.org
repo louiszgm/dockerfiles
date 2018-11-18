@@ -23,7 +23,7 @@ git pull
 #+BEGIN_SRC conf :tangle nginx/run.sh
   sudo docker run --rm -p 80:80 -p 443:443 \
        --network nginx_outside \
-       -v /var/jenkins_home/workspace/Nikola/output/:/usr/share/nginx/html \
+       -v /var/jenkins_home/workspace/jekyllBlog/_site/:/usr/share/nginx/html \
        -v $PWD/siteconfs/:/etc/nginx/conf.d \
        -v $PWD/snippets/:/etc/nginx/snippets/ \
        --name mynginx \
@@ -108,3 +108,5 @@ docker run --rm -v ~/blog/:/site -w /site -u $(id -u):$(id -g) \
 
 获取文章信息的命令
 nikola status -Psd
+** NEXT Test for agenda view
+ [2018-11-11 Sun 16:41]
