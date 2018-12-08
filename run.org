@@ -107,8 +107,6 @@ docker run --rm -v ~/blog/:/site -w /site -u $(id -u):$(id -g) \
 
 获取文章信息的命令
 nikola status -Psd
-** NEXT Test for agenda view
- [2018-11-11 Sun 16:41]
 * Jenkins-Job-Builder
 #+BEGIN_SRC conf :mkdirp yes :tangle jenkins-job-builder/Dockerfile
   FROM ubuntu:18.04
