@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+ ssrmu:
+    image: easonsummer/ssrpanel-ssrmu
+    restart: always
+    network_mode: "host"
+    volumes:
+      - ./user-config.json:/root/shadowsocks/user-config.json
+      - ./usermysql.json:/root/shadowsocks/usermysql.json
+      - ./dns.conf:/root/shadowsocks/dns.conf
+    command: python /root/shadowsocks/server.py
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
