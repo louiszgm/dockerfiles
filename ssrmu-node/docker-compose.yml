@@ -2,7 +2,7 @@ version: '2'
 
 services:
  ssrmu:
-    image: easonsummer/ssrpanel-ssrmu
+    build: .
     restart: always
     network_mode: "host"
     volumes:
