@@ -1,3 +1,0 @@
-#!/bin/bash
-docker run --rm -v ~/blog/:/site -w /site -u $(id -u):$(id -g) \
-     -p 8000:8000 registry.gitlab.com/paddy-hack/nikola:7.8.0 nikola "$@"
