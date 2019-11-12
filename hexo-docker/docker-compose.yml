@@ -1,8 +1,0 @@
-version: '2'
-
-services:
-  hexo-server:
-    image: hexo
-    ports: 
-      - "4000:80"
-    command: hexo server
