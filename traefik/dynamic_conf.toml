@@ -1,0 +1,19 @@
+## Dynamic configuration
+
+[http.routers.api]
+  rule = "Host(`traefik.louiszgm.xin`)"
+  entrypoints = ["websecure"]
+  service = "api@internal"
+  middlewares = ["myAuth"]
+  [http.routers.api.tls]
+
+# 用户：test 密码：test
+[http.middlewares.myAuth.basicAuth]
+  users = [
+    "test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"
+  ]
+
+[tls]
+  [[tls.certificates]]
+    certFile = "/ssl/1_git.louiszgm.xin_bundle.crt"
+    keyFile = "/ssl/2_git.louiszgm.xin.key"

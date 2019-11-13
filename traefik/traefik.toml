@@ -1,0 +1,34 @@
+## traefik.toml
+## Static configuration
+
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+
+  [entryPoints.websecure]
+    address = ":443"
+
+  [entryPoints.gitssh]
+    address = ":222"
+
+  [entryPoints.traefik]
+    address = ":8000"
+
+[providers]
+  [providers.docker]
+    # 限制服务发现范围
+    # 如果设置为 false, 则没有 traefik.enable=true 标签的容器将从生成的路由配置中忽略
+    exposedByDefault = false 
+    network = "traefik"
+  [providers.file]
+    filename = "dynamic_conf.toml"
+    watch = true
+
+[retry]
+
+[api]
+  # dashboard = true
+  # insecure = true
+  #debug = true
+ 
+[ping]

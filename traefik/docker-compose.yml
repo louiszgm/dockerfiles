@@ -5,33 +5,50 @@ services:
   traefik:
     image: "traefik:v2.0.0-rc3"
     container_name: "traefik"
-    command:
-      #- "--log.level=DEBUG"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.toml:/traefik.toml"
+      - "./dynamic_conf.toml:/dynamic_conf.toml"
+      - "./ssl:/ssl"
+    networks:
+      - default
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
 
   gitea:
     image: "gitea/gitea:latest"
     container_name: "gitea"
     volumes:
-      - ./gitea:/
+      - "./gitea:/data"
+    networks:
+      - default
+      - traefik
+    ports:
+      - "222:22"
+    depends_on:
+      - db
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.gitea.entryPoints=web,websecure"
       - "traefik.http.routers.gitea.rule=Host(`git.louiszgm.xin`)"
-      - "traefik.http.routers.gitea.entrypoints=web"
-
+      - "traefik.http.routers.gitea.tls=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.services.myservice.loadbalancer.server.port=3000"
   db:
     image: mysql:5.7
+    container_name: "mysql"
     environment:
       - MYSQL_ROOT_PASSWORD=gitea
       - MYSQL_USER=gitea
       - MYSQL_PASSWORD=gitea
       - MYSQL_DATABASE=gitea
     volumes:
-      - ./mysql:/var/lib/mysql
+      - "./mysql:/var/lib/mysql"
+networks:
+  traefik:
+    external: true
