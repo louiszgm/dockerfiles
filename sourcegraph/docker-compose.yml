@@ -1,0 +1,17 @@
+version: "3.3"
+
+services:
+
+  sourcegraph:
+    image: "sourcegraph/server:3.9.4"
+    container_name: "sourcegraph"
+    ports:
+      - "7080:7080"
+      - "2633:2633"
+    volumes:
+      - "sourcegraphconfig:/etc/sourcegraph"
+      - "sourcegraphdata:/var/opt/sourcegraph"
+
+volumes:
+  sourcegraphconfig:
+  sourcegraphdata:
